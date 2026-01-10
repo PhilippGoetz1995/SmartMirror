@@ -35,25 +35,85 @@ TODO
 ### Frontend
 TODO
 
-### Database
+### Motion → Display On/Off (Wayland + wlr-randr)
+This setup turns the display ON when Motion starts an event and OFF when Motion ends an event.
+The “no motion” delay is handled by Motion’s event_gap.
+
+**Components**
+
+- Camera feed exposed as V4L2 loopback device: /dev/video10 => because the original Feed is not compatible with motion AND the face recognition otherwise would use the same feed
+- Motion reads /dev/video10 and triggers hooks
+- wlr-randr controls the Wayland output (e.g. HDMI-A-1)
+- Motion runs as user motion, so we use passwordless sudo to run display scripts as user pi (Wayland session user)
+- Two Scripts are created to turn the screen on and off
+-- /home/pi/bin/screen-on.sh AND /home/pi/bin/screen-off.sh
+
+
+**Architecture Overview**
+- Camera is accessed only once via libcamera
+- /dev/video10 acts as a shared virtual camera
+- Motion reads /dev/video10
+- Display control happens via wlr-randr
+```bash
+Pi Camera
+   ↓
+rpicam-vid (libcamera)
+   ↓
+ffmpeg
+   ↓
+/dev/video10 (v4l2loopback)
+   ↓
+Motion
+   ├─ on_event_start → screen ON
+   └─ on_event_end   → screen OFF (after event_gap)
+```
+
+**Motion Commands**
+```bash
+# Get to the Config
+sudo nano /etc/motion/motion.conf
+
+# Restart the service
+sudo systemctl restart motion
+
+# Motion is running in the background => can be edited here
+sudo systemctl edit motion
+
+# Check the status of motion
+sudo systemctl status motion --no-pager
+journalctl -u motion -f
+sudo tail -f /var/log/motion/motion.log
+
+# See the loopback Camera service file
+sudo nano /etc/systemd/system/camera-loopback.service
+# Enable and start it
+sudo systemctl daemon-reload
+sudo systemctl enable --now camera-loopback.service
+
+```
 
 
 <br>
 
 ## 🔧 How To Use
 
-## DEV Environment
+## Environment for development
 
-1. VPC to Raspberry PI via RealVNC Viewer => IP Adress: 192.168.50.182
-2. IDE (Cursor) to PI via (Password see .env File)
+Credentials => see .env File
 
-
-## DEV Local Commands
+1. VPC to Raspberry PI via RealVNC Viewer
+2. IDE (Cursor) to PI via SSH
+3. Start Mirror Application
 
 ```bash
-# Start next.js Application
-npm run dev
+# Start the Magic Mirror Application
+node --run start
 ```
+
+## How to install modules
+
+1. Simple copy repo into /modules folder (git clone <repo-url>)
+
 
 <br>
 
@@ -65,7 +125,11 @@ npm run dev
 
 ## 🚧 TODO
 
-- TODO
+- add documentation for "motion" which i use for enabel and disable PI
+- Added a service that is publishing the video feed in the correct format to "motion" => sudo nano /etc/systemd/system/camera-loopback.service
+-- The event gap in the settings of "motion" define how long after a motion the end of motion command should be send
+
+
 
 <br>
 
