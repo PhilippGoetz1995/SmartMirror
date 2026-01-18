@@ -101,6 +101,55 @@ systemctl --user list-units --type=service
 
 ```
 
+
+<br>
+
+## 🔧 How To Use
+
+## Environment for development
+
+Credentials => see .env File in Cloud Drive
+
+1. VPC to Raspberry PI via RealVNC Viewer
+2. IDE (Cursor) to PI via SSH
+3. Start Mirror Application
+
+```bash
+# Start the Magic Mirror Application
+node --run start
+```
+
+## 📄 Documentation | Raspberry PI Services
+
+
+
+## 📄 Documentation | Camera Loopback Splitter (Raspberry Pi)
+
+This service captures the Raspberry Pi camera **once** (via `rpicam-vid`) and **duplicates** the raw video stream into **two V4L2 loopback devices**.  
+This is useful when you want **two independent consumers** (e.g., Motion detection + MagicMirror Face Detection) without fighting over the physical camera device.
+
+---
+
+**What it does**
+
+- Captures from the Pi Camera using `rpicam-vid` (libcamera stack)
+- Streams raw video (`yuv420p`) to stdout
+- Uses `tee` to duplicate the stream
+- Feeds each stream into `ffmpeg`, writing to:
+  - **/dev/video10** (consumer A, e.g. Motion)
+  - **/dev/video11** (consumer B, e.g. MagicMirror Face Detection)
+
+So your apps read from `/dev/video10` and `/dev/video11` instead of directly from the Pi camera.
+
+---
+
+
+## 📄 Documentation MagicMirror Module
+
+**How to install modules**
+
+1. Simple copy repo into /modules folder (git clone <repo-url>)
+
 **Logging Mechanism**
 
 There are two logging mechanism:
@@ -123,26 +172,6 @@ Console    │  Log.log(...)      ───────▶  │                �
 
 ```
 
-<br>
-
-## 🔧 How To Use
-
-## Environment for development
-
-Credentials => see .env File
-
-1. VPC to Raspberry PI via RealVNC Viewer
-2. IDE (Cursor) to PI via SSH
-3. Start Mirror Application
-
-```bash
-# Start the Magic Mirror Application
-node --run start
-```
-
-## How to install modules
-
-1. Simple copy repo into /modules folder (git clone <repo-url>)
 
 
 <br>
