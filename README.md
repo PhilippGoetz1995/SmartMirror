@@ -34,6 +34,9 @@ The **P-Goetz SmartMirror** project is an interactive, modular smart mirror plat
 ## 🏗️ Architecture
 
 
+<p align="center">
+  <img src="https://github.com/PhilippGoetz1995/SmartMirror/blob/main/SmartMirror_Architecture_v1.drawio.png" alt="Smart Mirror Architecture" width="700">
+</p>
 
 
 
