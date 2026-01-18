@@ -197,10 +197,12 @@ Page 2
 **Use Cases**
 
 1. **Sleep if no motion**  
-- Mirror goes to sleep if no motion is detected for more than 10 minutes.
+1.1 Mirror goes to sleep if no motion is detected for more than 10 minutes.
+1.2 Asas 
+1.3 as
 
-- **Multi Page**  
-  Mirror layout is split into multiple pages; each page shows a different set of modules.
+2. **Multi Page**  
+2.1 Mirror layout is split into multiple pages; each page shows a different set of modules.
 
 - **Swipe to change page**  
   Swipe left or right on the screen to switch between pages.
