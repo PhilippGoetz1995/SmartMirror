@@ -196,28 +196,28 @@ Page 2
 
 **Use Cases**
 
-1. **Sleep if no motion**  
-1.1 Mirror goes to sleep if no motion is detected for more than 10 minutes.
-1.2 Asas 
-1.3 as
+1. **Sleep if no motion**
+  - Mirror goes to sleep if no motion is detected for more than 10 minutes.
+  - Asas
+  - as
 
 2. **Multi Page**  
-2.1 Mirror layout is split into multiple pages; each page shows a different set of modules.
+  - Mirror layout is split into multiple pages; each page shows a different set of modules.
 
-- **Swipe to change page**  
-  Swipe left or right on the screen to switch between pages.
+3. **Swipe to change page**  
+  - Swipe left or right on the screen to switch between pages.
 
-- **Face Detection**  
-  Detects a face and triggers an Alexa sound and shows the Trello module.
+4. **Face Detection**  
+  - Detects a face and triggers an Alexa sound and shows the Trello module.
 
-- **Trello**  
-  Displays Trello tasks from a specific list on the mirror.
+5. **Trello**  
+  - Displays Trello tasks from a specific list on the mirror.
 
-- **Alexa Connection**  
-  Connects to Alexa to play notification sounds.
+6. **Alexa Connection**  
+  - Connects to Alexa to play notification sounds.
 
-- **Spotify**  
-  Allows playing and controlling Spotify; if the mirror is not the active device, a device selection button is shown.
+7. **Spotify**  
+  - Allows playing and controlling Spotify; if the mirror is not the active device, a device selection button is shown.
 
 <br>
 
@@ -256,6 +256,13 @@ To ensure that the code running on your Raspberry Pi is safe and recoverable, th
 <br>
 
 ## 📅 Version History
+
+<details>
+<summary><strong>v1.0.0</strong> – 18.01.2026</summary>
+
+- 🔧 Updated the readme and added a Architecture Drawing
+
+</details>
 
 
 <details>
