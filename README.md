@@ -24,7 +24,8 @@
 ---
 
 
-TODO
+The **P-Goetz SmartMirror** project is an interactive, modular smart mirror platform designed to enhance your everyday living space with timely information and useful features accessible at a glance. Whether you're interested in checking your calendar, the latest weather update, news headlines, or your daily schedule, SmartMirror puts essential data front and center, all beautifully displayed on a reflective interface.
+
 
 
 ---
@@ -32,74 +33,8 @@ TODO
 <!-- GETTING STARTED -->
 ## 🏗️ Architecture
 
-### Frontend
-TODO
-
-### Motion → Display On/Off (Wayland + wlr-randr)
-This setup turns the display ON when Motion starts an event and OFF when Motion ends an event.
-The “no motion” delay is handled by Motion’s event_gap.
-
-**Components**
-
-- Camera feed exposed as V4L2 loopback device: /dev/video10 => because the original Feed is not compatible with motion AND the face recognition otherwise would use the same feed
-- Motion reads /dev/video10 and triggers hooks
-- wlr-randr controls the Wayland output (e.g. HDMI-A-1)
-- Motion runs as user motion, so we use passwordless sudo to run display scripts as user pi (Wayland session user)
-- Two Scripts are created to turn the screen on and off
--- /home/pi/bin/screen-on.sh AND /home/pi/bin/screen-off.sh
 
 
-**Architecture Overview**
-- Camera is accessed only once via libcamera
-- /dev/video10 acts as a shared virtual camera
-- Motion reads /dev/video10
-- Display control happens via wlr-randr
-```bash
-Pi Camera
-   ↓
-rpicam-vid (libcamera)
-   ↓
-ffmpeg
-   ↓
-/dev/video10 (v4l2loopback)
-   ↓
-Motion
-   ├─ on_event_start → screen ON
-   └─ on_event_end   → screen OFF (after event_gap)
-```
-
-**Motion Commands**
-```bash
-# Get to the Config
-sudo nano /etc/motion/motion.conf
-
-# Restart the service
-sudo systemctl restart motion
-
-# Motion is running as a Service in the background => can be edited here
-sudo systemctl edit motion
-
-# Check the status of motion
-sudo systemctl status motion --no-pager
-journalctl -u motion -f
-sudo tail -f /var/log/motion/motion.log
-
-# See the loopback Camera service file
-sudo nano /etc/systemd/system/camera-loopback.service
-# Enable and start it
-sudo systemctl daemon-reload
-sudo systemctl enable --now camera-loopback.service
-
-# Stop User Service Magic Mirro
-systemctl --user stop magicmirror
-
-# See System Services (without GUI)
-running => systemctl list-units --type=service --state=running
-all => systemctl list-unit-files --type=service
-# See User Services (with GUI) => MagicMirror
-systemctl --user list-units --type=service
-
-```
 
 
 <br>
@@ -115,11 +50,63 @@ Credentials => see .env File in Cloud Drive
 3. Start Mirror Application
 
 ```bash
-# Start the Magic Mirror Application
+
+# Start the Magic Mirror Application for Dev
 node --run start
+
+# --- System Scripts Commands ---
+
+# List all Services
+systemctl list-units --type=service --state=running # Only running ones
+systemctl list-units --type=service # All
+
+# Start & Stop the Service
+sudo systemctl start camera-loopback.service
+sudo systemctl stop camera-loopback.service
+
+# Enable / Disable Service
+sudo systemctl enable camera-loopback.service
+sudo systemctl disable camera-loopback.service
+
+# Edit the Config
+sudo nano /etc/systemd/system/camera-loopback.service
+
+
+# --- User Scripts Commands ---
+
+# List all Services
+systemctl --user list-units --type=service --state=running # Only running ones
+systemctl --user list-unit-files --type=service # All
+
+# Start & Stop the Service
+systemctl --user start magicmirror.service
+systemctl --user stop magicmirror.service
+
+# Enable / Disable Service
+systemctl --user enable magicmirror.service
+systemctl --user disable magicmirror.service
+
+# Edit the Config
+sudo nano ~/.config/systemd/user/magicmirror.service
+
+
 ```
 
-## 📄 Documentation | Raspberry PI Services
+## 📄 Documentation | Motion Service
+
+The motion.service is started via systemd but the configuration of the service is in other file
+
+**Motion Commands**
+```bash
+# Get to the Config
+sudo nano /etc/motion/motion.conf
+
+# Check the status of motion
+sudo systemctl status motion --no-pager
+journalctl -u motion -f
+sudo tail -f /var/log/motion/motion.log
+
+```
 
 
 
@@ -140,6 +127,8 @@ This is useful when you want **two independent consumers** (e.g., Motion detecti
   - **/dev/video11** (consumer B, e.g. MagicMirror Face Detection)
 
 So your apps read from `/dev/video10` and `/dev/video11` instead of directly from the Pi camera.
+
+sudo nano /etc/modprobe.d/v4l2loopback.conf => Create the devices
 
 ---
 
@@ -172,9 +161,40 @@ Console    │  Log.log(...)      ───────▶  │                �
 
 ```
 
+**Design in config**
+
+General
+|        | left          | center          | right         |
+|--------|---------------|-----------------|---------------|
+| Top    | top_left      | top_center      | top_right     |
+| Center | upper_third   | middle_center   | lower_left    |
+| Bottom | bottom_left   | bottom_center   | bottom_right  |
+
+
+Page 1
+
+|        | left           | center | right       |
+|--------|----------------|--------|-------------|
+| Top    | Time & Date    |        | Wetter      |
+| Center |                |        |             |
+| Bottom | Spotify        |        | Trello Task |
+
+
+```
+
+## 📄 Documentation LED Stripe
+
+- The LED is only working when using the correct venv => see documentation
 
 
 <br>
+
+
+
+## ☁️ Backup: Raspberry Pi Code to Google Drive
+
+To ensure that the code running on your Raspberry Pi is safe and recoverable, the project is regularly backed up to Google Drive. This protects you from data loss due to SD card corruption or hardware failure.
+
 
 ## 🤬 Hints to not cry everytime
 
@@ -184,34 +204,9 @@ Console    │  Log.log(...)      ───────▶  │                �
 
 ## 🚧 TODO
 
-**Node Red**
-- For alexa Connection
-
-- Start it with "node-red"
 
 
-- 97 LED Stripe length
-- The LED is only working when using the correct venv => see documentation
-- add documentation for "motion" which i use for enabel and disable PI
-- Added a service that is publishing the video feed in the correct format to "motion" => sudo nano /etc/systemd/system/camera-loopback.service
--- The event gap in the settings of "motion" define how long after a motion the end of motion command should be send
-- add documentation that Magic Mirror is also running as a service: 
 
-systemctl --user stop magicmirror
-systemctl --user start magicmirror
-systemctl --user restart magicmirror
-systemctl --user disable magicmirror
-systemctl --user enable magicmirror
-journalctl --user -u magicmirror -f
-
-
-1. Loopback Split Service 
-
-/etc/systemd/system/camera-loopback.service
-
-sudo nano /etc/modprobe.d/v4l2loopback.conf => Create the devices
-
-sudo nano /usr/local/bin/camera-loopback-split.sh => transfer the images into the devices
 
 <br>
 
