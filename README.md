@@ -51,9 +51,6 @@ Credentials => see .env File in Cloud Drive
 
 ```bash
 
-# Start the Magic Mirror Application for Dev
-node --run start
-
 # --- System Scripts Commands ---
 
 # List all Services
@@ -88,6 +85,12 @@ systemctl --user disable magicmirror.service
 
 # Edit the Config
 sudo nano ~/.config/systemd/user/magicmirror.service
+
+# --- MagicMirror DEV Commands ---
+
+# Start the Magic Mirror Application for Dev
+node --run start
+
 
 
 ```
@@ -152,8 +155,8 @@ There are two logging mechanism:
            │  MMM-YourModule.js            │                │  node_helper.js              │
            │  (runs in Chromium/Electron)  │                │  (runs in Node)              │
            │                               │                │                              │
-Browser    │  console.log(...)  ───────▶  │                │  console.log(...) ────▶ Terminal
-Console    │  Log.log(...)      ───────▶  │                │                              │
+Browser    │  console.log(...)  ───────▶   │                │  console.log(..) ──▶ Terminal│
+Console    │  Log.log(...)      ───────▶   │                │                              │
            │                               │                │  sendSocketNotification(...) │
            │  socketNotificationReceived   │◀──── Bridge ───│  (push message to UI)        │
            │   → console.log(...)          │                │                              │
@@ -191,10 +194,10 @@ Page 2
 | Bottom |      |                 |       |
 
 
-## Use Cases
+**Use Cases**
 
-- **Sleep if no motion**  
-  Mirror goes to sleep if no motion is detected for more than 10 minutes.
+1. **Sleep if no motion**  
+- Mirror goes to sleep if no motion is detected for more than 10 minutes.
 
 - **Multi Page**  
   Mirror layout is split into multiple pages; each page shows a different set of modules.
@@ -213,22 +216,21 @@ Page 2
 
 - **Spotify**  
   Allows playing and controlling Spotify; if the mirror is not the active device, a device selection button is shown.
-s
 
+<br>
 
 ## 📄 Documentation LED Stripe
 
 - The LED is only working when using the correct venv => see documentation
 
-
 <br>
-
 
 
 ## ☁️ Backup: Raspberry Pi Code to Google Drive
 
 To ensure that the code running on your Raspberry Pi is safe and recoverable, the project is regularly backed up to Google Drive. This protects you from data loss due to SD card corruption or hardware failure.
 
+<br>
 
 ## 🤬 Hints to not cry everytime
 
