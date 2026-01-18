@@ -76,7 +76,7 @@ sudo nano /etc/motion/motion.conf
 # Restart the service
 sudo systemctl restart motion
 
-# Motion is running in the background => can be edited here
+# Motion is running as a Service in the background => can be edited here
 sudo systemctl edit motion
 
 # Check the status of motion
@@ -90,8 +90,38 @@ sudo nano /etc/systemd/system/camera-loopback.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now camera-loopback.service
 
+# Stop User Service Magic Mirro
+systemctl --user stop magicmirror
+
+# See System Services (without GUI)
+running => systemctl list-units --type=service --state=running
+all => systemctl list-unit-files --type=service
+# See User Services (with GUI) => MagicMirror
+systemctl --user list-units --type=service
+
 ```
 
+**Logging Mechanism**
+
+There are two logging mechanism:
+1. Node.js Proccess => will be shown in the terminal
+2. Frontend Log => will be shown in Chrome Console
+
+```bash
+
+                 (Renderer / UI process)                          (Node.js process)
+           ┌───────────────────────────────┐                ┌──────────────────────────────┐
+           │  MMM-YourModule.js            │                │  node_helper.js              │
+           │  (runs in Chromium/Electron)  │                │  (runs in Node)              │
+           │                               │                │                              │
+Browser    │  console.log(...)  ───────▶  │                │  console.log(...) ────▶ Terminal
+Console    │  Log.log(...)      ───────▶  │                │                              │
+           │                               │                │  sendSocketNotification(...) │
+           │  socketNotificationReceived   │◀──── Bridge ───│  (push message to UI)        │
+           │   → console.log(...)          │                │                              │
+           └───────────────────────────────┘                └──────────────────────────────┘
+
+```
 
 <br>
 
@@ -125,11 +155,34 @@ node --run start
 
 ## 🚧 TODO
 
+**Node Red**
+- For alexa Connection
+
+- Start it with "node-red"
+
+
+- 97 LED Stripe length
+- The LED is only working when using the correct venv => see documentation
 - add documentation for "motion" which i use for enabel and disable PI
 - Added a service that is publishing the video feed in the correct format to "motion" => sudo nano /etc/systemd/system/camera-loopback.service
 -- The event gap in the settings of "motion" define how long after a motion the end of motion command should be send
+- add documentation that Magic Mirror is also running as a service: 
+
+systemctl --user stop magicmirror
+systemctl --user start magicmirror
+systemctl --user restart magicmirror
+systemctl --user disable magicmirror
+systemctl --user enable magicmirror
+journalctl --user -u magicmirror -f
 
 
+1. Loopback Split Service 
+
+/etc/systemd/system/camera-loopback.service
+
+sudo nano /etc/modprobe.d/v4l2loopback.conf => Create the devices
+
+sudo nano /usr/local/bin/camera-loopback-split.sh => transfer the images into the devices
 
 <br>
 
