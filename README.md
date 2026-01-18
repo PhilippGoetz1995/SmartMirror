@@ -163,6 +163,8 @@ Console    │  Log.log(...)      ───────▶  │                �
 
 **Design in config**
 
+Layout ⇒ [https://deepwiki.com/MagicMirrorOrg/MagicMirror/2.4-ui-and-css-framework](https://deepwiki.com/MagicMirrorOrg/MagicMirror/2.4-ui-and-css-framework)
+
 General
 |        | left          | center          | right         |
 |--------|---------------|-----------------|---------------|
@@ -173,14 +175,46 @@ General
 
 Page 1
 
-|        | left           | center | right       |
-|--------|----------------|--------|-------------|
-| Top    | Time & Date    |        | Wetter      |
-| Center |                |        |             |
-| Bottom | Spotify        |        | Trello Task |
+|        | left          | center          | right         |
+|--------|---------------|-----------------|---------------|
+| Top    | Time & Date   | top_center      | Wetter        |
+| Center |               |                 |               |
+| Bottom | Spotify       |                 | Trello Task   |
 
 
-```
+
+Page 2
+|        | left | center          | right |
+|--------|------|-----------------|-------|
+| Top    |      |                 |       |
+| Center |      | Google Calender |       |
+| Bottom |      |                 |       |
+
+
+## Use Cases
+
+- **Sleep if no motion**  
+  Mirror goes to sleep if no motion is detected for more than 10 minutes.
+
+- **Multi Page**  
+  Mirror layout is split into multiple pages; each page shows a different set of modules.
+
+- **Swipe to change page**  
+  Swipe left or right on the screen to switch between pages.
+
+- **Face Detection**  
+  Detects a face and triggers an Alexa sound and shows the Trello module.
+
+- **Trello**  
+  Displays Trello tasks from a specific list on the mirror.
+
+- **Alexa Connection**  
+  Connects to Alexa to play notification sounds.
+
+- **Spotify**  
+  Allows playing and controlling Spotify; if the mirror is not the active device, a device selection button is shown.
+s
+
 
 ## 📄 Documentation LED Stripe
 
@@ -202,10 +236,17 @@ To ensure that the code running on your Raspberry Pi is safe and recoverable, th
 
 <br>
 
-## 🚧 TODO
+## 🚧 NEXT STEPS / OPEN TODO
 
-
-
+- Trello Tasks ⇒ https://github.com/benjaminflessner/MMM-Trello
+- Indoor & Outdoor Thermometer
+- Strava ⇒ https://github.com/tylerstambaugh/MMM-StravaWeekInBike
+- Tesla Charging State ⇒ https://github.com/denverquane/MMM-Teslamate
+- Schritt anzeige ⇒ https://github.com/fry0815/MMM-GoogleFit
+- Show Internet Speed ⇒ https://github.com/irsheep/MMM-SnmpIntSpeed
+- Campfire
+- SpaceX Flights ⇒ https://github.com/koxm/MMM-SpaceX
+- Schweiz Uhrzeit ⇒ https://github.com/splattner/MMM-bernwordclock
 
 
 <br>
