@@ -235,6 +235,9 @@ Page 2
 
 To ensure that the code running on your Raspberry Pi is safe and recoverable, the project is regularly backed up to Google Drive. This protects you from data loss due to SD card corruption or hardware failure.
 
+ssh pi@raspberrypi.local "sudo dd if=/dev/mmcblk0 bs=4M status=progress" \
+| gzip > raspberrypi-full-backup.img.gz
+
 <br>
 
 ## 🤬 Hints to not cry everytime
