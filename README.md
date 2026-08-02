@@ -52,6 +52,10 @@ Credentials => see .env File in Cloud Drive
 2. IDE (Cursor) to PI via SSH
 3. Start Mirror Application
 
+> Debugging: The `MMM-ViewNotifications` module now writes the notification stream locally to a JSONL file for easier troubleshooting.
+> - `MagicMirror/modules/MMM-ViewNotifications/MMM-ViewNotifications-notifications.jsonl`
+> - Ensure the VIF notification module comments are enabled so notification entries are captured and visible in the debug file.
+
 ```bash
 
 # --- System Scripts Commands ---
@@ -262,6 +266,15 @@ ssh pi@raspberrypi.local "sudo dd if=/dev/mmcblk0 bs=4M status=progress" \
 <br>
 
 ## 📅 Version History
+
+<details>
+<summary><strong>v1.0.1</strong> – 02.08.2026</summary>
+
+- Added local notification logging for `MMM-ViewNotifications`.
+- Added debugging methodology for the notification JSONL file.
+- Enabled VIF notification module comment support for notification visibility.
+
+</details>
 
 <details>
 <summary><strong>v1.0.0</strong> – 18.01.2026</summary>
