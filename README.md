@@ -44,62 +44,85 @@ The **P-Goetz SmartMirror** project is an interactive, modular smart mirror plat
 
 ## 🔧 How To Use
 
-## Environment for development
+## 🧑‍💻 Environment for development
 
-Credentials => see .env File in Cloud Drive
+### 1. Prerequisites
 
-1. VPC to Raspberry PI via RealVNC Viewer
-2. IDE (Cursor) to PI via SSH
-3. Start Mirror Application
+- Credentials => see `.env` file in Cloud Drive
+- Raspberry Pi reachable in the local network (`raspberrypi.local`)
 
-> Debugging: The `MMM-ViewNotifications` module now writes the notification stream locally to a JSONL file for easier troubleshooting.
-> - `MagicMirror/modules/MMM-ViewNotifications/MMM-ViewNotifications-notifications.jsonl`
-> - Ensure the VIF notification module comments are enabled so notification entries are captured and visible in the debug file.
+### 2. Connect to the Raspberry Pi
+
+1. VPC to Raspberry Pi via RealVNC Viewer
+2. IDE (Cursor) to Pi via SSH
+
+### 3. Start / Stop the Mirror
+
+The mirror runs as a **user** systemd service (`magicmirror.service`).
+Stop the service before starting the mirror manually, otherwise two instances compete for the same port and display.
 
 ```bash
+# Production: run via systemd
+systemctl --user start magicmirror.service
+systemctl --user stop magicmirror.service
+systemctl --user restart magicmirror.service
+systemctl --user status magicmirror.service --no-pager
 
-# --- System Scripts Commands ---
+# Development: stop the service, then start manually from the MagicMirror folder
+systemctl --user stop magicmirror.service
+cd ~/MagicMirror
+node --run start
+# Stop the manual run with Ctrl+C
+```
 
-# List all Services
-systemctl list-units --type=service --state=running # Only running ones
-systemctl list-units --type=service # All
+### 4. Logs & Debugging
 
-# Start & Stop the Service
+| What | Where / Command |
+|------|-----------------|
+| Mirror application log (Node.js / systemd) | `journalctl --user -u magicmirror.service -f` (live) |
+| Last 200 lines | `journalctl --user -u magicmirror.service -n 200 --no-pager` |
+| Since last boot | `journalctl --user -u magicmirror.service -b --no-pager` |
+| Manual run (`node --run start`) | Printed directly in the terminal |
+| Module frontend log (`Log.log`, `console.log` in `MMM-*.js`) | Browser console (Chrome DevTools, `F12` / `Ctrl+Shift+I`) |
+| Module backend log (`node_helper.js`) | Same as the application log (journal / terminal) |
+| Notification stream (`MMM-ViewNotifications`) | `MagicMirror/modules/MMM-ViewNotifications/MMM-ViewNotifications-notifications.jsonl` |
+| Motion | `sudo tail -f /var/log/motion/motion.log` or `journalctl -u motion -f` |
+| Camera loopback | `journalctl -u camera-loopback.service -f` |
+
+```bash
+# Follow the notification debug file live
+tail -f ~/MagicMirror/modules/MMM-ViewNotifications/MMM-ViewNotifications-notifications.jsonl
+```
+
+> Note: MagicMirror itself does not write a log file; it logs to stdout, which systemd stores in the journal.
+> The log verbosity is controlled by `logLevel` in `config/config.js` (e.g. `["INFO", "LOG", "WARN", "ERROR", "DEBUG"]`).
+> Ensure the VIF notification module comments are enabled so notification entries are captured and visible in the debug file.
+
+### 5. Useful systemd commands
+
+```bash
+# --- System services (e.g. camera-loopback, motion) ---
+systemctl list-units --type=service --state=running   # Only running ones
+systemctl list-units --type=service                   # All
+
 sudo systemctl start camera-loopback.service
 sudo systemctl stop camera-loopback.service
 
-# Enable / Disable Service
-sudo systemctl enable camera-loopback.service
+sudo systemctl enable camera-loopback.service         # Start on boot
 sudo systemctl disable camera-loopback.service
 
-# Edit the Config
-sudo nano /etc/systemd/system/camera-loopback.service
+sudo nano /etc/systemd/system/camera-loopback.service # Edit the config
+sudo systemctl daemon-reload                          # After editing a unit file
 
+# --- User services (e.g. magicmirror) ---
+systemctl --user list-units --type=service --state=running   # Only running ones
+systemctl --user list-unit-files --type=service              # All
 
-# --- User Scripts Commands ---
-
-# List all Services
-systemctl --user list-units --type=service --state=running # Only running ones
-systemctl --user list-unit-files --type=service # All
-
-# Start & Stop the Service
-systemctl --user start magicmirror.service
-systemctl --user stop magicmirror.service
-
-# Enable / Disable Service
-systemctl --user enable magicmirror.service
+systemctl --user enable magicmirror.service           # Start on boot
 systemctl --user disable magicmirror.service
 
-# Edit the Config
-sudo nano ~/.config/systemd/user/magicmirror.service
-
-# --- MagicMirror DEV Commands ---
-
-# Start the Magic Mirror Application for Dev
-node --run start
-
-
-
+nano ~/.config/systemd/user/magicmirror.service       # Edit the config
+systemctl --user daemon-reload                        # After editing a unit file
 ```
 
 ## 📄 Documentation | Motion Service
